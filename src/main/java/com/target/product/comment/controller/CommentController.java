@@ -22,11 +22,20 @@ public class CommentController {
 	@RequestMapping(method = RequestMethod.POST, value = "/comment")
 	public CommentValidateResponse getfeedback(@RequestBody CommentValidateRequest request) {
 
-		boolean result = moderateComment.isValid(request.getPayload().getComment());
-
 		CommentValidateResponse response = new CommentValidateResponse();
 		CommentResponseData data = new CommentResponseData();
 		ResponseStatus status = null;
+
+		if (request == null || request.getPayload() == null || request.getPayload().getComment() == null) {
+
+			data.setFeedback("InValid Request");
+			status = new ResponseStatus(Status.FAILED, "Request is invalid. Please submit valid request");
+			response.setStatus(status);
+			response.setPayload(data);
+			return response;
+		}
+
+		boolean result = moderateComment.isValid(request.getPayload().getComment());
 
 		if (result) {
 			data.setFeedback("Valid Comment");
